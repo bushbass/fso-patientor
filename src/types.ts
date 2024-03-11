@@ -1,3 +1,5 @@
+import { MergeType } from "@mui/icons-material";
+
 export interface BaseEntry {
   id: string;
   description: string;
@@ -48,11 +50,8 @@ export interface Diagnosis {
   latin?: string;
 }
 
-export interface Diagnosis {
-  code: string;
-  name: string;
-  latin?: string;
-}
+export type Diagnoses = Diagnosis[];
+
 
 export enum Gender {
   Male = "male",

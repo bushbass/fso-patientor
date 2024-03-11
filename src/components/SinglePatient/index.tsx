@@ -3,7 +3,8 @@ import { useLocation } from 'react-router-dom';
 import { apiBaseUrl } from '../../constants';
 import axios from 'axios';
 import patientService from "../../services/patients";
-import { Patient, Gender, Entry } from '../../types';
+import diagnosesService from "../../services/diagnoses";
+import { Patient, Gender, Entry, Diagnoses, Diagnosis } from '../../types';
 
 function SinglePatient() {
     const location = useLocation();
@@ -33,9 +34,27 @@ function SinglePatient() {
         void fetchPatient();
     }, [id]);
 
+    const [diagnoses, setDiagnoses] = useState<Diagnoses>([]);
 
+    useEffect(() => {
+        void axios.get<void>(`${apiBaseUrl}/diagnoses`);
+
+        const fetchDiagnoses = async () => {
+            const diagnoses = await diagnosesService.getAll();
+            setDiagnoses(diagnoses);
+            console.log(diagnoses);
+
+        };
+        void fetchDiagnoses();
+    }, []);
+
+    function getDescriptionFromCode(code: string) {
+        const description = diagnoses.find((diagnosis: Diagnosis) => diagnosis.code == code);
+        return description?.name;
+    }
 
     return (
+
         <div>
             <h1>SinglePatient</h1>
             <h2>Name: {patient.name} - Gender: {patient.gender}</h2>
@@ -49,12 +68,14 @@ function SinglePatient() {
 
                     <p>{entry.date} - {entry.description}</p>
                     <ul>
-                        {entry.diagnosisCodes?.map(code => <li key={code}>{code}</li>)}
-
+                        {entry.diagnosisCodes?.map(code => <li key={code}>{code} - {getDescriptionFromCode(code)}
+                        </li>)}
                     </ul>
                 </div>
                 );
             })}
+
+
         </div>
     );
 }
